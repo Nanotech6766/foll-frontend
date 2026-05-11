@@ -1,4 +1,3 @@
-import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useInicio } from '../hooks/useInicio';
 import type { QuickAccessProfile } from '../../iam/models/user.model';

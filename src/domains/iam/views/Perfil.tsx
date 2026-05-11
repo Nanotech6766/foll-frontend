@@ -1,4 +1,3 @@
-import React from 'react';
 import { usePerfil } from '../hooks/usePerfil';
 
 // Íconos SVG

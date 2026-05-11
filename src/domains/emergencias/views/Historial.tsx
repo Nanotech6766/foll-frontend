@@ -1,4 +1,3 @@
-import React from 'react';
 import { useHistorial } from '../hooks/useHistorial';
 import type { TipoEvento } from '../models/evento.model';
 

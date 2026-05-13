@@ -26,6 +26,14 @@ export interface Abuelito {
   grupoSanguineo?: string;
   enfermedades?: string[];
   medicamentos?: string[];
+  anotaciones?: Anotacion[];
+}
+
+export interface Anotacion {
+  id: string;
+  fecha: string;
+  texto: string;
+  autor: string;
 }
 // ... resto de interfaces se mantienen igual
 

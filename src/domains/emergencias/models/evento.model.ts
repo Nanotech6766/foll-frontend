@@ -1,3 +1,5 @@
+import type { Anotacion } from '../../iam/models/abuelito.model';
+
 export type TipoEvento = 'Emergencia Real' | 'Falso Positivo';
 
 export interface EventoCaida {
@@ -11,4 +13,6 @@ export interface EventoCaida {
   ubicacion: string;
   mapaUrl?: string; // Para la imagen 3D del mapa
   observaciones?: string;
+  tipoCaida?: string;
+  anotacionesPaciente?: Anotacion[];
 }

@@ -12,6 +12,8 @@ export const useAbuelitos = () => {
   const [isDetallesOpen, setIsDetallesOpen] = useState(false); // Detalles del Perfil + Equipo de Cuidado
   const [isDispositivoOpen, setIsDispositivoOpen] = useState(false); // Telemetría/Info Dispositivo
   const [isVincularHardwareOpen, setIsVincularHardwareOpen] = useState(false); // Vincular ID de Hardware
+  const [isAnotacionOpen, setIsAnotacionOpen] = useState(false); // Modal para Añadir Anotación Rápida
+  const [isBitacoraOpen, setIsBitacoraOpen] = useState(false); // Modal para Ver Bitácora
 
   // Contexto para los modales
   const [abuelitoSeleccionado, setAbuelitoSeleccionado] = useState<Abuelito | null>(null);
@@ -39,6 +41,10 @@ export const useAbuelitos = () => {
           cuidadores: [
             { id: 'u1', nombre: 'María Gonzales', rol: 'Principal', email: 'maria@foll.com' },
             { id: 'u2', nombre: 'Juan Silva', rol: 'Invitado', email: 'juan@foll.com' }
+          ],
+          anotaciones: [
+            { id: 'a1', fecha: '12 Oct 2026, 14:00', texto: 'Le di la pastilla de la presión. Estaba un poco mareado.', autor: 'María Gonzales' },
+            { id: 'a2', fecha: '11 Oct 2026, 09:00', texto: 'Se quejó de dolor de cabeza en la mañana.', autor: 'Juan Silva' }
           ]
         },
         {
@@ -54,6 +60,7 @@ export const useAbuelitos = () => {
           grupoSanguineo: 'A-',
           enfermedades: ['Diabetes Tipo 2'],
           medicamentos: ['Metformina'],
+          anotaciones: [],
           cuidadores: [
             { id: 'u3', nombre: 'Ricardo Ruiz', rol: 'Principal', email: 'ricardo@foll.com' },
             { id: 'u1', nombre: 'María Gonzales', rol: 'Invitado', email: 'maria@foll.com' }
@@ -146,23 +153,51 @@ export const useAbuelitos = () => {
     );
   };
 
-  const handleTransferirMando = (abuelitoId: string, nuevoPrincipalId: string) => {
-    console.log('API: Transfiriendo mando principal a:', nuevoPrincipalId);
+  const handleCompartirMando = (abuelitoId: string, cuidadorId: string) => {
+    console.log('API: Compartiendo mando principal con:', cuidadorId);
     setAbuelitos(prev =>
       prev.map(a => {
         if (a.id !== abuelitoId) return a;
         return {
           ...a,
-          rol: 'Invitado', // Tú dejas de ser principal
-          cuidadores: a.cuidadores.map(c => {
-            if (c.id === nuevoPrincipalId) return { ...c, rol: 'Principal' };
-            if (c.rol === 'Principal') return { ...c, rol: 'Invitado' };
-            return c;
-          })
+          cuidadores: a.cuidadores.map(c => 
+            c.id === cuidadorId ? { ...c, rol: 'Principal' } : c
+          )
         };
       })
     );
-    setIsDetallesOpen(false);
+  };
+
+  const handleQuitarMando = (abuelitoId: string, cuidadorId: string) => {
+    console.log('API: Quitando mando principal a:', cuidadorId);
+    setAbuelitos(prev =>
+      prev.map(a => {
+        if (a.id !== abuelitoId) return a;
+        return {
+          ...a,
+          cuidadores: a.cuidadores.map(c => 
+            c.id === cuidadorId ? { ...c, rol: 'Invitado' } : c
+          )
+        };
+      })
+    );
+  };
+
+  const handleAñadirAnotacion = (abuelitoId: string, texto: string) => {
+    console.log('API: Añadiendo anotación para abuelito:', abuelitoId);
+    const nuevaAnotacion = {
+      id: Math.random().toString(36).substr(2, 9),
+      fecha: new Date().toLocaleDateString('es-ES', { day: '2-digit', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit' }),
+      texto,
+      autor: 'Cuidador Actual'
+    };
+    
+    setAbuelitos(prev => prev.map(a => 
+      a.id === abuelitoId 
+        ? { ...a, anotaciones: [nuevaAnotacion, ...(a.anotaciones || [])] }
+        : a
+    ));
+    setIsAnotacionOpen(false);
   };
 
   // --- CONTROL DE APERTURA DE MODALES ---
@@ -191,6 +226,22 @@ export const useAbuelitos = () => {
     }
   };
 
+  const abrirAnotacion = (id: string) => {
+    const abuelito = abuelitos.find(a => a.id === id);
+    if (abuelito) {
+      setAbuelitoSeleccionado(abuelito);
+      setIsAnotacionOpen(true);
+    }
+  };
+
+  const abrirBitacora = (id: string) => {
+    const abuelito = abuelitos.find(a => a.id === id);
+    if (abuelito) {
+      setAbuelitoSeleccionado(abuelito);
+      setIsBitacoraOpen(true);
+    }
+  };
+
   return {
     abuelitos,
     solicitudes,
@@ -200,7 +251,9 @@ export const useAbuelitos = () => {
       isRegistrarOpen, setIsRegistrarOpen,
       isDetallesOpen, setIsDetallesOpen,
       isDispositivoOpen, setIsDispositivoOpen,
-      isVincularHardwareOpen, setIsVincularHardwareOpen
+      isVincularHardwareOpen, setIsVincularHardwareOpen,
+      isAnotacionOpen, setIsAnotacionOpen,
+      isBitacoraOpen, setIsBitacoraOpen
     },
     detalles: {
       abuelitoSeleccionado,
@@ -216,7 +269,11 @@ export const useAbuelitos = () => {
       abrirVincularHardware,
       handleVincularHardwareSubmit,
       handleEliminarCuidador,
-      handleTransferirMando
+      handleCompartirMando,
+      handleQuitarMando,
+      abrirAnotacion,
+      abrirBitacora,
+      handleAñadirAnotacion
     }
   };
 };

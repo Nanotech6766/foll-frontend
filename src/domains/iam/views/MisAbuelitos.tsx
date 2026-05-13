@@ -1,4 +1,4 @@
-import  { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { useAbuelitos } from "../hooks/useAbuelitos";
 import { Modal } from "../../../shared/components/modals/Modal";
@@ -161,18 +161,18 @@ const LinkIcon = () => (
   </svg>
 );
 const ShieldCheckIcon = () => (
-  <svg
-    width="14"
-    height="14"
-    viewBox="0 0 24 24"
-    fill="none"
-    stroke="currentColor"
-    strokeWidth="2"
-  >
+  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
     <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" />
   </svg>
 );
-const TransferIcon = () => (
+const ShieldXIcon = () => (
+  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+    <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" />
+    <line x1="9" y1="9" x2="15" y2="15" />
+    <line x1="15" y1="9" x2="9" y2="15" />
+  </svg>
+);
+/*const TransferIcon = () => (
   <svg
     width="14"
     height="14"
@@ -182,6 +182,12 @@ const TransferIcon = () => (
     strokeWidth="2"
   >
     <path d="M16 3h5v5M4 20L21 3M21 16v5h-5M15 15l6 6" />
+  </svg>
+);*/
+const NoteIcon = () => (
+  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+    <path d="M12 20h9" />
+    <path d="M16.5 3.5a2.121 2.121 0 013 3L7 19l-4 1 1-4L16.5 3.5z" />
   </svg>
 );
 
@@ -205,6 +211,7 @@ export default function MisAbuelitos() {
   const [isEditing, setIsEditing] = useState(false);
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
   const [editForm, setEditForm] = useState<Partial<Abuelito>>({});
+  const [nuevaAnotacion, setNuevaAnotacion] = useState("");
 
   useEffect(() => {
     if (location.state?.openRegisterModal) {
@@ -213,11 +220,11 @@ export default function MisAbuelitos() {
     }
   }, [location, navigate, modals]);
 
-  const handleAbrirDetallesPerfil = (id: string) => {
+  /*const handleAbrirDetallesPerfil = (id: string) => {
     setIsEditing(false);
     setShowDeleteConfirm(false);
     handlers.abrirDetallesPerfil(id);
-  };
+  };*/
 
   const handleIniciarEdicion = () => {
     if (detalles.abuelitoSeleccionado)
@@ -292,17 +299,23 @@ export default function MisAbuelitos() {
                     </span>
                   </div>
 
-                  {/* BOLITA DE ESTADO DEL HARDWARE */}
-                  {!isPendiente && abuelito.dispositivo && (
-                    <div className="flex items-center gap-1.5 bg-white px-2 py-1 rounded-full shadow-sm border border-gray-100">
-                      <span
-                        className={`w-2 h-2 rounded-full ${isOnline ? "bg-green-500 animate-pulse" : "bg-red-500"}`}
-                      ></span>
-                      <span className="text-[9px] font-bold text-gray-500 uppercase">
-                        {isOnline ? "Online" : "Offline"}
-                      </span>
-                    </div>
-                  )}
+                  <div className="flex flex-col items-end gap-2">
+                    {!isPendiente && (
+                      <button className="p-2 bg-white border border-gray-100 text-gray-400 hover:text-[#16333F] hover:bg-gray-50 rounded-lg transition-colors shadow-[0_2px_10px_-4px_rgba(0,0,0,0.1)]" title="Código QR">
+                        <QRIcon />
+                      </button>
+                    )}
+                    {!isPendiente && abuelito.dispositivo && (
+                      <div className="flex items-center gap-1.5 bg-white px-2 py-1 rounded-full shadow-sm border border-gray-100">
+                        <span
+                          className={`w-2 h-2 rounded-full ${isOnline ? "bg-green-500 animate-pulse" : "bg-red-500"}`}
+                        ></span>
+                        <span className="text-[9px] font-bold text-gray-500 uppercase">
+                          {isOnline ? "Online" : "Offline"}
+                        </span>
+                      </div>
+                    )}
+                  </div>
                 </div>
 
                 {isPendiente ? (
@@ -343,27 +356,19 @@ export default function MisAbuelitos() {
                     </div>
 
                     <div className="flex flex-col gap-2 mt-5 relative z-10">
-                      {/* Fila 1: Botones principales */}
+                      {/* Fila 1 */}
+                      <button onClick={() => handlers.abrirDetallesPerfil(abuelito.id)} className="w-full border border-[#16333F] text-[#16333F] hover:bg-[#16333F] hover:text-white rounded-xl py-2 text-[11px] font-bold transition-colors">
+                        Perfil
+                      </button>
+                      {/* Fila 2 */}
                       <div className="flex gap-2">
-                        <button
-                          onClick={() =>
-                            handlers.abrirDetallesDispositivo(abuelito.id)
-                          }
-                          className="flex-1 flex items-center justify-center gap-1.5 bg-[#F9F7F1] border border-gray-200 text-[#16333F] hover:bg-gray-100 rounded-xl py-2 text-[11px] font-bold transition-colors"
-                        >
-                          <CpuIcon /> Info. Dispositivo
+                        <button onClick={() => handlers.abrirDetallesDispositivo(abuelito.id)} className="flex-1 flex items-center justify-center gap-1.5 bg-[#F9F7F1] border border-gray-200 text-[#16333F] hover:bg-gray-100 rounded-xl py-2 text-[11px] font-bold transition-colors">
+                          <CpuIcon /> Dispositivo
                         </button>
-                        <button className="w-10 flex items-center justify-center border border-gray-200 text-gray-500 hover:text-[#16333F] hover:bg-gray-50 rounded-xl transition-colors">
-                          <QRIcon />
+                        <button onClick={() => handlers.abrirBitacora(abuelito.id)} className="flex-1 flex items-center justify-center gap-1.5 border border-gray-200 text-[#16333F] hover:bg-gray-50 rounded-xl py-2 text-[11px] font-bold transition-colors">
+                          <NoteIcon /> Anotaciones
                         </button>
                       </div>
-                      {/* Fila 2: Perfil */}
-                      <button
-                        onClick={() => handleAbrirDetallesPerfil(abuelito.id)}
-                        className="w-full border border-[#16333F] text-[#16333F] hover:bg-[#16333F] hover:text-white rounded-xl py-2 text-[11px] font-bold transition-colors"
-                      >
-                        Detalles del Perfil
-                      </button>
                     </div>
                   </>
                 )}
@@ -544,6 +549,87 @@ export default function MisAbuelitos() {
             </div>
           </div>
         )}
+      </Modal>
+
+      {/* --- NUEVO MODAL: Añadir Anotación Rápida --- */}
+      <Modal
+        isOpen={modals.isAnotacionOpen}
+        onClose={() => {
+          modals.setIsAnotacionOpen(false);
+          setNuevaAnotacion("");
+        }}
+        title="Añadir Anotación Rápida"
+      >
+        <p className="text-sm text-gray-500 mb-5">
+          Escribe una nota rápida para el registro médico de{" "}
+          <span className="font-bold text-[#16333F]">
+            {detalles.abuelitoSeleccionado?.nombre}
+          </span>
+          .
+        </p>
+        <textarea
+          placeholder="Ej. Hoy amaneció con dolor de cabeza..."
+          value={nuevaAnotacion}
+          onChange={(e) => setNuevaAnotacion(e.target.value)}
+          rows={4}
+          className="w-full px-4 py-3 bg-[#F9F7F1] border border-gray-200 rounded-xl text-sm outline-none focus:border-[#16333F] mb-6 resize-none"
+        />
+        <button
+          onClick={() => {
+            if (detalles.abuelitoSeleccionado && nuevaAnotacion.trim()) {
+              handlers.handleAñadirAnotacion(detalles.abuelitoSeleccionado.id, nuevaAnotacion);
+              setNuevaAnotacion("");
+            }
+          }}
+          className="w-full bg-[#DCA646] hover:bg-[#B8860B] text-white py-3 rounded-xl font-bold transition-colors shadow-md"
+        >
+          Guardar Anotación
+        </button>
+      </Modal>
+
+      {/* --- NUEVO MODAL: Ver Bitácora --- */}
+      <Modal
+        isOpen={modals.isBitacoraOpen}
+        onClose={() => modals.setIsBitacoraOpen(false)}
+        title="Bitácora de Cuidado"
+      >
+        <p className="text-sm text-gray-500 mb-5">
+          Historial de anotaciones médicas para{" "}
+          <span className="font-bold text-[#16333F]">
+            {detalles.abuelitoSeleccionado?.nombre}
+          </span>
+          .
+        </p>
+        <button
+          onClick={() => {
+            modals.setIsBitacoraOpen(false);
+            if (detalles.abuelitoSeleccionado) {
+              handlers.abrirAnotacion(detalles.abuelitoSeleccionado.id);
+            }
+          }}
+          className="w-full mb-5 bg-[#FDECA6] hover:bg-[#FCE07B] text-[#16333F] py-2.5 rounded-xl text-xs font-bold transition-colors flex items-center justify-center gap-2"
+        >
+          <NoteIcon /> Añadir Nueva Anotación
+        </button>
+        <div className="space-y-4 max-h-80 overflow-y-auto pr-2">
+          {detalles.abuelitoSeleccionado?.anotaciones && detalles.abuelitoSeleccionado.anotaciones.length > 0 ? (
+            detalles.abuelitoSeleccionado.anotaciones.map((nota) => (
+              <div key={nota.id} className="bg-[#F9F7F1] p-4 rounded-xl border border-gray-200 shadow-sm relative">
+                <div className="absolute top-4 left-0 w-1 h-8 bg-[#DCA646] rounded-r-md"></div>
+                <div className="pl-2">
+                  <p className="text-xs text-gray-500 mb-1 font-bold">{nota.fecha}</p>
+                  <p className="text-sm text-[#16333F] mb-3 leading-relaxed">{nota.texto}</p>
+                  <p className="text-[10px] text-gray-400 font-medium">Registrado por: {nota.autor}</p>
+                </div>
+              </div>
+            ))
+          ) : (
+            <div className="text-center py-10 bg-gray-50 rounded-xl border border-dashed border-gray-300">
+              <NoteIcon />
+              <p className="text-sm text-gray-400 font-medium mt-3">No hay anotaciones registradas.</p>
+            </div>
+          )}
+        </div>
       </Modal>
 
       {/* --- MODAL: Registrar Abuelito --- */}
@@ -818,6 +904,7 @@ export default function MisAbuelitos() {
                     )}
                   </div>
                 </div>
+
                 <div className="mt-6 pt-6 border-t border-gray-100">
                   <h4 className="flex items-center gap-2 text-xs font-bold text-[#16333F] mb-4 uppercase tracking-wider">
                     <UsersIcon /> Equipo de Cuidado
@@ -854,24 +941,45 @@ export default function MisAbuelitos() {
                             {/* ACCIONES PARA EL PRINCIPAL */}
                             {iamPrincipal && !isMe && (
                               <div className="flex gap-1">
-                                <button
-                                  title="Transferir Mando Principal"
-                                  onClick={() => {
-                                    if (
-                                      window.confirm(
-                                        `¿Estás seguro de transferir el mando principal a ${cuidador.nombre}? Perderás permisos de administración.`,
-                                      )
-                                    ) {
-                                      handlers.handleTransferirMando(
-                                        detalles.abuelitoSeleccionado!.id,
-                                        cuidador.id,
-                                      );
-                                    }
-                                  }}
-                                  className="p-2 text-gray-400 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition-colors"
-                                >
-                                  <TransferIcon />
-                                </button>
+                                {cuidador.rol === "Invitado" ? (
+                                  <button
+                                    title="Compartir Mando Principal"
+                                    onClick={() => {
+                                      if (
+                                        window.confirm(
+                                          `¿Estás seguro de compartir el mando principal con ${cuidador.nombre}?`
+                                        )
+                                      ) {
+                                        handlers.handleCompartirMando(
+                                          detalles.abuelitoSeleccionado!.id,
+                                          cuidador.id
+                                        );
+                                      }
+                                    }}
+                                    className="p-2 text-gray-400 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition-colors"
+                                  >
+                                    <ShieldCheckIcon />
+                                  </button>
+                                ) : (
+                                  <button
+                                    title="Quitar Mando Principal"
+                                    onClick={() => {
+                                      if (
+                                        window.confirm(
+                                          `¿Estás seguro de quitar el mando principal a ${cuidador.nombre}?`
+                                        )
+                                      ) {
+                                        handlers.handleQuitarMando(
+                                          detalles.abuelitoSeleccionado!.id,
+                                          cuidador.id
+                                        );
+                                      }
+                                    }}
+                                    className="p-2 text-[#DCA646] hover:text-red-600 hover:bg-red-50 rounded-lg transition-colors"
+                                  >
+                                    <ShieldXIcon />
+                                  </button>
+                                )}
                                 <button
                                   title="Eliminar del Equipo"
                                   onClick={() => {
